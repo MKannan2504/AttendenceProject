@@ -107,8 +107,30 @@ class _HomePageState extends State<HomePage> {
         }
 
         final data = snapshot.data!;
+
+        final userData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+
+        // Safe read with default value
+        final name = userData.containsKey('name') && userData['name'] != null
+            ? userData['name']
+            : 'User';
+
+        final phone = userData.containsKey('phone') && userData['phone'] != null
+            ? userData['phone']
+            : 'N/A';
+
+        final photo =
+            userData.containsKey('photo') &&
+                userData['photo'] != null &&
+                userData['photo'].toString().isNotEmpty
+            ? userData['photo']
+            : null;
+
         return Consumer<Themeprovider>(
           builder: (context, theme, child) {
+            final userData =
+                snapshot.data!.data() as Map<String, dynamic>? ?? {};
+
             return Scaffold(
               drawer: Drawer(
                 child: ListView(
@@ -121,18 +143,16 @@ class _HomePageState extends State<HomePage> {
                           radius: 70,
                           backgroundImage: _profileImage != null
                               ? FileImage(_profileImage!)
-                              : data['photo'] != null
-                              ? NetworkImage(data['photo'])
+                              : (userData.containsKey('photo') &&
+                                    photo != null &&
+                                    photo.toString().isNotEmpty)
+                              ? NetworkImage(photo)
                               : null,
                         ),
                       ),
                     ),
-                    ListTile(
-                      title: Text("Username:  ${data['name'] ?? 'User'}"),
-                    ),
-                    ListTile(
-                      title: Text("Mobile no: ${data['phone'] ?? 'N/A'}"),
-                    ),
+                    ListTile(title: Text("Username:  ${name ?? 'User'}")),
+                    ListTile(title: Text("Mobile no: ${phone ?? 'N/A'}")),
                     Row(
                       children: [
                         ElevatedButton(
@@ -294,8 +314,8 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     Text(
-                      "Welcome ${data['name'] ?? 'User'}\n"
-                      "Mobile: ${data['phone'] ?? 'N/A'}",
+                      "Welcome ${name ?? 'User'}\n"
+                      "Mobile: ${phone ?? 'N/A'}",
                       textAlign: TextAlign.center,
                       style: const TextStyle(fontSize: 18),
                     ),
@@ -368,10 +388,13 @@ class _EditPageState extends State<EditPage> {
   Future<void> updateUserDetails(Map<String, dynamic> data) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
-      if (user == null) return;
+      if (user != null) {
+        await GoogleAuthService().createUserIfNotExists(user);
+      }
+      ;
 
       // 🔹 Update Firestore
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      await FirebaseFirestore.instance.collection('users').doc(user?.uid).set({
         'name': nameCntrl.text.trim(),
         'phone': phoneCntrl.text.trim(),
         if (imageUrl != null) 'photo': imageUrl,
@@ -408,14 +431,29 @@ class _EditPageState extends State<EditPage> {
         if (!snapshot.hasData || !snapshot.data!.exists) {
           return const Center(child: Text("No user data found"));
         }
+        final snapshotData = snapshot.data!;
 
-        final data = snapshot.data!.data() as Map<String, dynamic>;
+        final data = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+
+        final name = data.containsKey('name') && data['name'] != null
+            ? data['name']
+            : 'User';
+
+        final phone = data.containsKey('phone') && data['phone'] != null
+            ? data['phone']
+            : 'N/A';
+        final photo =
+            (data.containsKey('photo') &&
+                data['photo'] != null &&
+                data['photo'].toString().isNotEmpty)
+            ? data['photo']
+            : null;
+
         if (!_isInitialized) {
-          nameCntrl.text = data['name'] ?? "";
-          phoneCntrl.text = data['phone'] ?? "";
+          nameCntrl.text = name;
+          phoneCntrl.text = phone;
           _isInitialized = true;
         }
-
         return Consumer<Themeprovider>(
           builder: (context, theme, child) {
             return Scaffold(
@@ -432,11 +470,16 @@ class _EditPageState extends State<EditPage> {
                           radius: 70,
                           backgroundImage: _profileImage != null
                               ? FileImage(_profileImage!)
-                              : data['photo'] != null
-                              ? NetworkImage(data['photo'])
+                              : (data.containsKey('photo') &&
+                                    "$photo" != null &&
+                                    "$photo".toString().isNotEmpty)
+                              ? NetworkImage("$photo")
                               : null,
                           child:
-                              (_profileImage == null && data['photo'] == null)
+                              (_profileImage == null &&
+                                  (!data.containsKey('photo') ||
+                                      photo == null ||
+                                      photo.toString().isEmpty))
                               ? Icon(
                                   Icons.person_2_sharp,
                                   size: 50,

@@ -6,7 +6,7 @@ import 'package:loginpage/features/login_screen/Domain/Usecases/GoogleSIgninUsec
 import 'package:loginpage/features/login_screen/Presentation/pages/home_screen.dart';
 import 'package:loginpage/features/login_screen/Presentation/pages/registerPage.dart';
 import 'package:loginpage/features/login_screen/Presentation/pages/splash_screen.dart';
-import 'package:loginpage/features/login_screen/Presentation/pages/studentForm.dart';
+import 'package:loginpage/features/login_screen/Presentation/pages/student_lists.dart';
 import 'package:loginpage/features/login_screen/Presentation/provider/loginProvider.dart';
 import 'package:loginpage/features/login_screen/Presentation/pages/loginPage.dart';
 import 'package:loginpage/features/login_screen/Presentation/provider/themeprovider.dart';

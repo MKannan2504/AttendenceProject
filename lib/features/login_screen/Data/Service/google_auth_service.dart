@@ -108,6 +108,20 @@ class GoogleAuthService {
     return user;
   }
 
+  Future<void> createUserIfNotExists(User user) async {
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final doc = await docRef.get();
+
+    if (!doc.exists) {
+      await docRef.set({
+        'name': user.displayName ?? '',
+        'phone': '',
+        'photo': '',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
   Future<Map<String, dynamic>> getUser() async {
     final user = FirebaseAuth.instance.currentUser!;
     String uid = user.uid;

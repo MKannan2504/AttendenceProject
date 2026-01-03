@@ -1,3 +1,48 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
+import 'package:flutter/material.dart';
+
+class name extends StatelessWidget {
+  const name({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('students')
+            .doc(FirebaseAuth.instance.currentUser!.uid)
+            .snapshots(),
+        builder: (context, snapshot) {
+          // Loading state
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return CircularProgressIndicator();
+          }
+
+          // If document does not exist
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return Text("User data not found");
+          }
+
+          // Convert snapshot to a Map
+          final userData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+
+          // Safe read: check if 'name' exists
+          final name = userData.containsKey('name') && userData['name'] != null
+              ? userData['name']
+              : 'No Name';
+
+          // Display
+          return Text(
+            "Welcome, $name",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          );
+        },
+      ),
+    );
+  }
+}
+
 // import 'package:flutter/material.dart';
 // import 'package:loginpage/core/widgets/CustomTextField.dart';
 // import 'package:intl/intl.dart';
