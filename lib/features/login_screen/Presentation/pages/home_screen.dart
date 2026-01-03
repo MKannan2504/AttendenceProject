@@ -16,8 +16,6 @@ import 'package:loginpage/features/login_screen/Presentation/provider/themeprovi
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
-import 'package:profile_ui/profile_ui.dart';
-
 class HomePage extends StatefulWidget {
   @override
   State<HomePage> createState() => _HomePageState();
