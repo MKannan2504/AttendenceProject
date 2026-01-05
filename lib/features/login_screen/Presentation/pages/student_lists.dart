@@ -8,37 +8,61 @@ class StudentLists extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('students')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .snapshots(),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('students').snapshots(),
         builder: (context, snapshot) {
-          // Loading state
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+          if (!snapshot.hasData) {
+            return const CircularProgressIndicator();
           }
 
-          // If document does not exist
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return Text("User data not found");
-          }
+          print("ALL students count: ${snapshot.data!.docs.length}");
 
-          // Convert snapshot to a Map
-          final userData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+          return ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final data =
+                  snapshot.data!.docs[index].data() as Map<String, dynamic>;
 
-          // Safe read: check if 'name' exists
-          final name = userData.containsKey('name') && userData['name'] != null
-              ? userData['name']
-              : 'No Name';
-
-          // Display
-          return Text(
-            "Welcome, $name",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              return ListTile(
+                title: Text(data['name']),
+                trailing: Text(data["age"].toString()),
+              );
+            },
           );
         },
       ),
+
+      //   body: StreamBuilder<DocumentSnapshot>(
+      //     stream: FirebaseFirestore.instance
+      //         .collection('students')
+      //         .doc(FirebaseAuth.instance.currentUser!.uid)
+      //         .snapshots(),
+      //     builder: (context, snapshot) {
+      //       // Loading state
+      //       if (snapshot.connectionState == ConnectionState.waiting) {
+      //         return CircularProgressIndicator();
+      //       }
+
+      //       // If document does not exist
+      //       if (!snapshot.hasData || !snapshot.data!.exists) {
+      //         return Text("User data not found");
+      //       }
+
+      //       // Convert snapshot to a Map
+      //       final userData = snapshot.data!.data() as Map<String, dynamic>? ?? {};
+
+      //       // Safe read: check if 'name' exists
+      //       final name = userData.containsKey('name') && userData['name'] != null
+      //           ? userData['name']
+      //           : 'No Name';
+
+      //       // Display
+      //       return Text(
+      //         "Welcome, $name",
+      //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      //       );
+      //     },
+      //   ),
     );
   }
 }
