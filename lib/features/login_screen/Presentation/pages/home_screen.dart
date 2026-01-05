@@ -296,19 +296,23 @@ class _HomePageState extends State<HomePage> {
                     ),
 
                     Card(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              child: Icon(Icons.person_outline_outlined),
+                      child: InkWell(
+                        onTap: () =>
+                            Navigator.pushNamed(context, '/studentList'),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircleAvatar(
+                                child: Icon(Icons.person_outline_outlined),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("View Students"),
-                          ),
-                        ],
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("View Students"),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     Text(
