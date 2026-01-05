@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
 import 'package:flutter/material.dart';
 
-class name extends StatelessWidget {
-  const name({super.key});
+class StudentLists extends StatelessWidget {
+  const StudentLists({super.key});
 
   @override
   Widget build(BuildContext context) {

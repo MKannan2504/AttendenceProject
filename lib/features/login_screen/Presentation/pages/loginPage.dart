@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     return Consumer<Themeprovider>(
       builder: (context, theme, child) {
         return Scaffold(
-          backgroundColor: Colors.amber,
+          backgroundColor: Colors.blueAccent,
           body: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
